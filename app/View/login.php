@@ -13,7 +13,7 @@ if(isset($_GET["email"]) && isset($_GET["token"])){
 	$dateNow= date('Y-m-d H:i:s');
 	$verificateUser= new ProcessRecovery($_GET, $link);
 	$is_verificate= $verificateUser->verificateUser();
-
+	
 	if(mysqli_num_rows($is_verificate)> 0){
 		$verificateToken= $verificateUser-> verificateToken($dateNow);
 		if(mysqli_num_rows($verificateToken)){
@@ -32,6 +32,8 @@ if(isset($_GET["email"]) && isset($_GET["token"])){
 				WHERE u.email= '{$_GET['email']}'
 			";
 			mysqli_query($link, $updateUser);
+			
+			$message= "Email verificado correctamente";
 		}else{
 			header("location: page_not_found.php");
 		}
@@ -59,15 +61,15 @@ if(isset($_GET["email"]) && isset($_GET["token"])){
 	<main>
 		<div class="alerts">
 			<div class="container-alert">
-				<p class="alert-text"></p>
+				<p class="alert-text"><?= $message ?? ""?></p>
 			</div>
 		</div>
 		<div class="login">			
 			<div class="form-container">
 			    <img src="../../assets/img/logo_hiperauto.png" alt="logo-hiperauto" class="logo">
 				<form action="" class="form-login">
-					<label for="email" class="label">Usuario</label>
-					<input type="text" id="email" placeholder="Usuario" required class="input input-username">
+					<label for="email" class="label">Correo Electrónico</label>
+					<input type="text" id="email" placeholder="Usuario" required class="input input-username" value="<?= $_GET['email'] ?? ''?>">
 					
 					<label for="password"  class="label">Contraseña</label>
 					<input type="password"  id="password" placeholder="*********" required class="input input-password">

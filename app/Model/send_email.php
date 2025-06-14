@@ -34,11 +34,11 @@ function sendEmail($email_remitente, $email_destinatario, $password, $token, $ty
 
         // Enlace del proceso
         $link= $typeEmail == "register"
-            ? "http://localhost/hiperAuto/app/View/index.php?email=$email_destinatario&token=" . urlencode($token)
+            ? "http://localhost/hiperAuto/app/View/login.php?email=$email_destinatario&token=" . urlencode($token)
             : "http://localhost/hiperAuto/app/View/recovery_password.php?email=$email_destinatario&token=" . urlencode($token);
 
         // Logo (coloca tu URL real aquí si lo tienes online)
-        $logoURL= '/hiperAuto/assets/img/logo_hiperauto.png'; // <- REEMPLÁZALO con tu logo real
+        $logoURL= 'https://raw.githubusercontent.com/FjoseMejia/hiperAuto/main/assets/img/logo_hiperauto.png'; 
 
         // Contenido del mensaje
         $subject = $typeEmail == "register" ? "Bienvenido a HiperAuto" : "Restablecimiento de contraseña";

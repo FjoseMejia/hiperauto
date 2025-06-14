@@ -42,6 +42,7 @@ function encryptPassword($password){
 }
 
 if(isset($_REQUEST['type-form'])) {
+	
 	switch($_REQUEST["type-form"]){
 		case "login":		
 			$password= $_POST["password"];
@@ -53,15 +54,19 @@ if(isset($_REQUEST['type-form'])) {
 			$objectUser= $user->verificateUser();
 			checkObjectOrExit($objectUser, "Error code 500! Consulte con el proveedor");
 			
-			$dataUser= mysqli_fetch_array($objectUser);
-			if(password_verify($password, $dataUser["password"])){			
-				$result_table['state']= 1;				
-				session_start();
-				$_SESSION['id']= $dataUser['id'];
-				$_SESSION['state']= $result_table['state'];
+			if($dataUser= mysqli_fetch_array($objectUser)){
+				if(password_verify($password, $dataUser["password"])){
+					$result_table['state']= 1;				
+					session_start();
+					$_SESSION['id']= $dataUser['id'];
+					$_SESSION['state']= $result_table['state'];
+				}else{
+					$result_table['message']= "Credenciales Incorrectas";
+				}
 			}else{
-				$result_table['message']= "Credenciales Incorrectas";
+				$result_table['message']= "Correo invalido o no verificado";
 			}
+			
 			echo json_encode($result_table);    
 			break;
 			
@@ -69,27 +74,38 @@ if(isset($_REQUEST['type-form'])) {
 			$encryptedPassword= encryptPassword($_POST["password"]);
 			$_POST["password"]= $encryptedPassword;
 			$_POST["email"]= formatEmail($_POST["email"]);
+			
 			if(! verificateEmail($_POST["email"])){				
-				$result_table["message"]= "Digite un correo valido";
+				$result_table["message"]= "Digite un correo valido o verifique su cuenta";
 			}
 			
 			$newUser= new ProcessRegister($_POST, $link);
 			$objectNewUser= $newUser->verificateData();
-			checkObjectOrExit($objectNewUser, "Error code 500! Consulte con el proveedor");
+			checkObjectOrExit($objectNewUser, "Error code 500! Consulte con el proveedor");			
 			
-			
-			
-			if(!$dataUser= mysqli_fetch_array($objectNewUser);){
+			if(!mysqli_fetch_array($objectNewUser)){
 				
 				$token = bin2hex(random_bytes(32));
+				$expiracion = date('Y-m-d H:i:s', strtotime('+48 hour'));			
+				
 				
 				$insertUser= $newUser-> saveUser();
 				if($insertUser){
-					$result= sendEmail($email_remitente, $_POST['email'], $password, $token, "register");
+					$objectNewUser= $newUser->verificateData();
+					checkObjectOrExit($objectNewUser, "Error code 500! Consulte con el proveedor");
+					
+					if($dataUser= mysqli_fetch_array($objectNewUser)){
+						$result= sendEmail($email_remitente, $_POST['email'], $password, $token, "register");
+						
+						$idUser= $dataUser['id'];
+						
+						$saveToken= new ProcessRecovery($_POST, $link);
+						$isSaveToken= $saveToken->saveToken($idUser, $token, $expiracion);
+						checkObjectOrExit($isSaveToken, "Error code 500! Consulte con el proveedor");
+					}					
+					
 					$result_table["state"]= 1;
 					$result_table["message"]= "Registro Existoso";
-				}else{
-					$result_table["message"]= "Error ".mysqli_error($link);
 				}
 			}else{
 				$result_table["message"]= "El usuario ya existe";
@@ -117,7 +133,7 @@ if(isset($_REQUEST['type-form'])) {
 				$idUser= $dataUser['id'];				
 				$expiracion = date('Y-m-d H:i:s', strtotime('+1 hour'));
 				$token = bin2hex(random_bytes(32));
-				$saveToken= $user->saveToken($idUser, $expiracion, $token);
+				$saveToken= $user->saveToken($idUser, $token, $expiracion);
 				if(!$saveToken){
 					$result_table["state"]= 0;
 					$result_table["message"]= "Error 510 ".mysqli_error($link);
@@ -164,14 +180,9 @@ if(isset($_REQUEST['type-form'])) {
 				if($resultUpdate){
 					$result_table["state"]= 1;
 					$result_table["message"]= "Contraseña actualizada correctamente";
-				}else{
-					$result_table["state"]= 1;
+				}else{					
 					$result_table["message"]= "Error al actualizar la contraseña";
 				}
-			}else{
-				//RECORDAR ELIMINAR
-				$result_table["state"]= 1;
-				$result_table["message"]= "Su token ha expirado expirado";
 			}
 			
 			echo json_encode($result_table);

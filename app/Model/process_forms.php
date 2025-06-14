@@ -9,7 +9,7 @@ class ProcessLogin{
 	}
 	
 	public function verificateUser(){
-		$queryUser = "SELECT user.id, user.password FROM user WHERE email = '{$this->dataUser['email']}'";
+		$queryUser = "SELECT user.id, user.password FROM user WHERE email = '{$this->dataUser['email']}' AND verificado= '1'";
 		return mysqli_query($this->cursor, $queryUser);
 	}
 }
@@ -60,7 +60,7 @@ class ProcessRecovery extends ProcessLogin{
 		return mysqli_query($this->cursor, $queryUser);
 	}
 	
-	public function saveToken($id, $expiracion, $token){
+	public function saveToken($id, $token, $expiracion){
 		$query= "INSERT INTO tokens_recuperacion (usuario_id, token, expiracion) VALUES ($id, '$token', '$expiracion')";
 		return mysqli_query($this->cursor, $query);
 	}
