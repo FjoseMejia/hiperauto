@@ -42,7 +42,8 @@ $resultDocument= $documents->search($link);
 					<input type="password"  id="password" placeholder="*********" required class="input input-password">
 					
 					<button type="submit" class="primary-button login-button">Iniciar Sesión</button>
-					<button type="button" class="remember_password">Olvidé mi contraseña</button>
+					
+					<a href="" class="remember_password">Olvidé mi contraseña</a>
 				</form>
 				
 				<button type="button" class="secondary-button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">

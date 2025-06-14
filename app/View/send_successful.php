@@ -1,3 +1,10 @@
+<?php
+
+if(!isset($_GET["email"])){
+	header("location: page_not_found.php");
+}
+$email= $_GET["email"];
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,12 +38,12 @@
 
 						
 						<div class="mt-5 mb-4">
-							<a class="btn btn-success btn-lg w-100" href="index.php" role="button">Loguearse</a>
+							<a class="btn btn-success btn-lg w-100" href="../../index.php" role="button">Loguearse</a>
 						</div>	
 												
 						<div class="mb-5 text-center">
 							<span>¿No recibió el correo?</span> 
-							<a class="link-success link-opacity-75 link-underline-light" href="reenviar.php">Reenviar</a>
+							<a class="link-success link-opacity-75 link-underline-light" id="resend-email" href="">Reenviar</a>
 						</div>
 
 					</div>
@@ -44,7 +51,11 @@
 			</div>
 		</div>
 	</main>
-
+	<script>
+		let email= <?= json_encode($email)?>;
+	</script>
+	<script src="../../js/jquery-3.7.1.js"></script>
+	<script src="../../js/reesend_email.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

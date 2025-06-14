@@ -22,16 +22,36 @@ function checkObjectOrExit($object, $message) {
     }
 }
 
+function formatEmail($text){
+	return strtolower($text); 
+}
+
+function verificateEmail($email) {
+	$regex = '/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/';
+	if(!preg_match($regex, $email) === 1){
+		$result_table["state"]= 0;
+		$result_table["message"]= "Digite un correo valido Unu";
+		echo json_encode($result_table);
+		exit();
+	}
+	return true;
+}
+
+function encryptPassword($password){
+	return password_hash($password, PASSWORD_BCRYPT, ["cost"=>11]);
+}
+
 if(isset($_REQUEST['type-form'])) {
 	switch($_REQUEST["type-form"]){
-		case "login":
-		
+		case "login":		
 			$password= $_POST["password"];
-			$user= new ProcessLogin($_POST, $link);
+			$_POST["email"]= formatEmail($_POST["email"]);
 			
+			verificateEmail($_POST["email"]);	
+	
+			$user= new ProcessLogin($_POST, $link);			
 			$objectUser= $user->verificateUser();
 			checkObjectOrExit($objectUser, "Error code 500! Consulte con el proveedor");
-			
 			
 			$dataUser= mysqli_fetch_array($objectUser);
 			if(password_verify($password, $dataUser["password"])){			
@@ -41,14 +61,18 @@ if(isset($_REQUEST['type-form'])) {
 				$_SESSION['state']= $result_table['state'];
 			}else{
 				$result_table['message']= "Credenciales Incorrectas";
-			}	
-
+			}
 			echo json_encode($result_table);    
 			break;
-		case "register":
-			$password= $_POST["password"];
-			$password_process= password_hash($password, PASSWORD_BCRYPT, ["cost"=>11]);
-			$_POST["password"]= $password_process;
+			
+		case "register":			
+			$encryptedPassword= encryptPassword($_POST["password"]);
+			$_POST["password"]= $encryptedPassword;
+			$_POST["email"]= formatEmail($_POST["email"]);
+			if(! verificateEmail($_POST["email"])){
+				$result_table[""]= 0;
+				$result_table["message"]= "Digite un correo valido";
+			}
 			
 			$newUser= new ProcessRegister($_POST, $link);
 			$objectNewUser= $newUser->verificateData();
@@ -69,13 +93,11 @@ if(isset($_REQUEST['type-form'])) {
 			}	
 			echo json_encode($result_table);
 			break;
-		case "recovery_password":	
-		
-			function verificateEmail($email) {
-				$regex = '/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/';
-				return preg_match($regex, $email) === 1;
-			}
 			
+		case "recovery_password":		
+			
+			$_POST["email"]= formatEmail($_POST["email"]);
+			verificateEmail($_POST['email']);
 			$user= new ProcessRecovery($_POST, $link);
 			$objectUser= $user->verificateUser();
 			checkObjectOrExit($objectUser, "Error code 500! Consulte con el proveedor");
@@ -109,7 +131,7 @@ if(isset($_REQUEST['type-form'])) {
 					$result_table["message"]= "No se pudo enviar el correo";
 				}
 			}else{
-				$result_table[""]= 0;
+				$result_table["state"]= 0;
 				$result_table["message"]= "Digite un correo valido";
 			}
 			
@@ -125,8 +147,8 @@ if(isset($_REQUEST['type-form'])) {
 			}
 			
 			
-			$rePasswordProcess= password_hash($_POST['newPassword'], PASSWORD_BCRYPT, ["cost"=>11]);
-			$_POST['newPassword']= $rePasswordProcess;
+			$newPasswordEncrypt= encryptPassword($_POST['newPassword']);
+			$_POST['newPassword']= $newPasswordEncrypt;
 			
 		
 			$updatePassword= new ProcessRecovery($_POST, $link);

@@ -121,6 +121,7 @@ $(function() {
 			address: $("#address").val().trim(),
 			email: $("#email-user").val().trim(),
 			password: $("#password-user").val().trim(),
+			rePassword: $("").val().trim()
 		}, function(answer){
 			if(answer.state== 1){
 				//window.location.href= "../2_view/login.php";
@@ -164,7 +165,7 @@ $(function() {
 				email: email
 			}, function(answer){
 				if(answer.state== 1){
-					window.location.href= "send_successful.php";					
+					window.location.href = "send_successful.php?email=" + email;				
 				}else{
 					$(".container-alert").removeClass("container-alert-success container-alert-danger");
 					$(".container-alert").addClass("container-alert-danger");

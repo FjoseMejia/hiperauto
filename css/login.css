@@ -91,6 +91,7 @@ body {
   text-decoration: none;
   margin-bottom: 52px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .label {
