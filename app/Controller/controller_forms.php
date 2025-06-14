@@ -81,6 +81,9 @@ if(isset($_REQUEST['type-form'])) {
 			
 			$dataUser= mysqli_fetch_array($objectNewUser);
 			if(!$dataUser){
+				//aqui voy
+				$token = bin2hex(random_bytes(32));
+				$result= sendEmail($email_remitente, $_POST['email'], $password, $token, "register");
 				$insertUser= $newUser-> saveUser();
 				if($insertUser){
 					$result_table["state"]= 1;

@@ -43,7 +43,7 @@ $email= $_GET["email"];
 												
 						<div class="mb-5 text-center">
 							<span>¿No recibió el correo?</span> 
-							<a class="link-success link-opacity-75 link-underline-light" id="resend-email" href="">Reenviar</a>
+							<a class="link-success link-opacity-75 link-underline-light" id="resend-email" href="#">Reenviar</a>
 						</div>
 
 					</div>

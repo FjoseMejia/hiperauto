@@ -10,16 +10,11 @@ $(function() {
 	$(".form-login").on("submit", function(event) {
 		event.preventDefault();
 		let email= $('#email').val().trim();
-		let password= $('#password').val().trim();
-		if(password.length< 8){
-			$(".container-alert").addClass("container-alert-danger");
-			$(".alert-text").html("Contraseña muy corta");
-			return;
-		}
+		let password= $('#password').val().trim();		
 		
 		if(email== "" || password== "") {
 			$(".container-alert").addClass("container-alert-danger");
-			$(".alert-text").html("Ningún campo puede estar vacio");
+			$(".alert-text").html("Todos los campos son obligatorios");
 		}else{
 			$.post('../controller/controller_forms.php', {
 				'type-form': 'login',
@@ -55,31 +50,41 @@ $(function() {
 		}		
 	});		
 	
+	const inputs= [
+		"#names", 
+		"#last-names", 
+		"#type-document",
+		"#id-number",
+		"#number-phone",
+		"#address",
+		"#email-user",
+		"#password-user",
+		"#re-password"
+	];
+	
+	$(".btns-close").on("click", function(){
+		$(".container-alert").removeClass("container-alert-success container-alert-danger");
+		$(".alert-text").html("");
+		$(".form-control").removeClass("input-error");
+		inputs.forEach(function(idInput){
+			$(idInput).val("");
+		});
+	});	
     //Script Registro	
 	$("#signup-button").on("click", function(event){
 		event.preventDefault();
 		let inputsEmpty= false;
 		let firstInputEmpty= null;
 		
-		const inputs= [
-			"#names", 
-			"#last-names", 
-			"#type-document",
-			"#id-number",
-			"#number-phone",
-			"#address",
-			"#email-user",
-			"#password-user",
-			"#re-password-user"
-		];
+		
 		
 		inputs.forEach(function(idInput){
 			if($(idInput).val().trim()=== ""){
-				inputsEmpty= true;
+				inputsEmpty= true;				
 				
-				$(idInput).addClass("input-error");	
 				if(!firstInputEmpty){
 					firstInputEmpty= idInput;
+					$(firstInputEmpty).addClass("input-error");	
 				}
 			}else{
 				$(idInput).removeClass("input-error");
@@ -98,17 +103,16 @@ $(function() {
 		}
 		
 		let password= $("#password-user").val().trim();
-		let rePassword= $("#re-password-user").val().trim();
+		let rePassword= $("#re-password").val().trim();
 
-		if(password !== rePassword){
+		if(password!== rePassword){
 			$(".container-alert").removeClass("container-alert-success").addClass("container-alert-danger");
 			$(".alert-text").html("Las contraseñas no coinciden");
 			return; 
 		} else {
 			$(".container-alert").removeClass("container-alert-danger").addClass("container-alert-success");
 			$(".alert-text").html("");
-		}
-			
+		}		
 			
 		
 		$.post("../Controller/controller_forms.php", {
@@ -121,7 +125,7 @@ $(function() {
 			address: $("#address").val().trim(),
 			email: $("#email-user").val().trim(),
 			password: $("#password-user").val().trim(),
-			rePassword: $("").val().trim()
+			rePassword: $("#re-password").val().trim()
 		}, function(answer){
 			if(answer.state== 1){
 				//window.location.href= "../2_view/login.php";
@@ -135,12 +139,9 @@ $(function() {
 		});
 	});
 	
-	$(".btns-close").on("click", function(){
-		$(".container-alert").removeClass("container-alert-success container-alert-danger");
-		$(".alert-text").html("");
-		$(".form-control").removeClass("input-error");
-	});	
 	
+	
+	//Script Recuperar contraseña
 	$(".remember_password").on("click", function(){		
 		
 		let email= $("#email").val().trim();

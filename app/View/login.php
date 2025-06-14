@@ -43,7 +43,7 @@ $resultDocument= $documents->search($link);
 					
 					<button type="submit" class="primary-button login-button">Iniciar Sesión</button>
 					
-					<a href="" class="remember_password">Olvidé mi contraseña</a>
+					<a href="#" class="remember_password">Olvidé mi contraseña</a>
 				</form>
 				
 				<button type="button" class="secondary-button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -109,7 +109,7 @@ $resultDocument= $documents->search($link);
 				</div>
 				<div>
 					<label for="re-password" class="form-label">Confirmar contraseña</label>
-					<input type="password" class="form-control inputRegister" id="re-password-user">
+					<input type="password" class="form-control inputRegister" id="re-password">
 				</div>
 			</form>
 		  </div>

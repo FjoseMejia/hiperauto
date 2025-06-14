@@ -12,7 +12,7 @@ require '../../herramientas/PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function sendEmail($email_remitente, $email_destinatario, $password, $token) {
+function sendEmail($email_remitente, $email_destinatario, $password, $token, $typeEmail= "recoveryPassword") {
     $mail = new PHPMailer(true);
 
     try {
@@ -28,19 +28,31 @@ function sendEmail($email_remitente, $email_destinatario, $password, $token) {
         // Remitente y destinatario
         $mail->setFrom($email_remitente, 'HiperAuto');
         $mail->addAddress($email_destinatario);
-
-        // Contenido del correo
-        $mail->isHTML(true);
-		$link = "localhost/hiperAuto/app/View/recovery_password.php?email=$email_destinatario&token=".urlencode($token);
-        $mail->Subject= 'Restablecimiento de contraseña';
-        $mail->Body = "
-            <h2></h2>
-            <p>Hola, hemos recibido una solicitud para restablecer tu clave.</p>
-            <p>Haz clic en el siguiente enlace para continuar con el proceso:</p>
-            <p><a href='$link'>$link</a></p>
-            <p>Si no solicitaste esto, puedes ignorar este correo.</p>
-        ";
-
+        
+        if(($typeEmail== "register")){
+                $mail->isHTML(true);
+                $link = "localhost/hiperAuto/app/View/recovery_password.php?email=$email_destinatario&token=".urlencode($token);
+                $mail->Subject= 'Restablecimiento de contraseña';
+                $mail->Body = "
+                        <h2></h2>
+                        <p>Hola, hemos recibido una solicitud para restablecer tu clave.</p>
+                        <p>Haz clic en el siguiente enlace para continuar con el proceso:</p>
+                        <p><a href='$link'>$link</a></p>
+                        <p>Si no solicitaste esto, puedes ignorar este correo.</p>
+                ";
+        }else{
+                // Contenido del correo
+                $mail->isHTML(true);
+                $link = "localhost/hiperAuto/app/View/recovery_password.php?email=$email_destinatario&token=".urlencode($token);
+                $mail->Subject= 'Restablecimiento de contraseña';
+                $mail->Body = "
+                    <h2></h2>
+                    <p>Hola, hemos recibido una solicitud para restablecer tu clave.</p>
+                    <p>Haz clic en el siguiente enlace para continuar con el proceso:</p>
+                    <p><a href='$link'>$link</a></p>
+                    <p>Si no solicitaste esto, puedes ignorar este correo.</p>
+                ";
+        }
         // Enviar el correo
         $mail->send();
         return true;
