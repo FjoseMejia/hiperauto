@@ -69,8 +69,7 @@ if(isset($_REQUEST['type-form'])) {
 			$encryptedPassword= encryptPassword($_POST["password"]);
 			$_POST["password"]= $encryptedPassword;
 			$_POST["email"]= formatEmail($_POST["email"]);
-			if(! verificateEmail($_POST["email"])){
-				$result_table[""]= 0;
+			if(! verificateEmail($_POST["email"])){				
 				$result_table["message"]= "Digite un correo valido";
 			}
 			
@@ -79,13 +78,14 @@ if(isset($_REQUEST['type-form'])) {
 			checkObjectOrExit($objectNewUser, "Error code 500! Consulte con el proveedor");
 			
 			
-			$dataUser= mysqli_fetch_array($objectNewUser);
-			if(!$dataUser){
-				//aqui voy
+			
+			if(!$dataUser= mysqli_fetch_array($objectNewUser);){
+				
 				$token = bin2hex(random_bytes(32));
-				$result= sendEmail($email_remitente, $_POST['email'], $password, $token, "register");
+				
 				$insertUser= $newUser-> saveUser();
 				if($insertUser){
+					$result= sendEmail($email_remitente, $_POST['email'], $password, $token, "register");
 					$result_table["state"]= 1;
 					$result_table["message"]= "Registro Existoso";
 				}else{

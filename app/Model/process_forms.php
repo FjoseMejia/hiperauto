@@ -74,6 +74,7 @@ class ProcessRecovery extends ProcessLogin{
 			AND tr.expiracion> '$dateNow'
 			AND tr.utilizado= 0"
 		;		
+		
 		return mysqli_query($this->cursor, $query);		
 	}
 	public function updatePassword(){
